@@ -32,8 +32,12 @@ function view_myViewEndPoint() {
 
     var name = this.get.name || '';
     var type = this.get.type || '';
-
-    db.trx.start(function() {
+    
+    
+    // You might also wait transactions to prevent deadlock using waitTransaction()
+    db.trx.waitTransaction(function() {
+    	
+    	db.trx.start(function() {
 
         db.models.Service.find({where: {name: name, type: type}})
             .success(function(service) {
@@ -71,6 +75,7 @@ function view_myViewEndPoint() {
                 }
                     
             });
-    });
+        });	
+    }
 }
 ```
