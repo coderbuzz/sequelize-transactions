@@ -26,56 +26,53 @@ function connectDB(callback) {
 	db = sequelize;
 }
 
-
 function view_myViewEndPoint() {
     var self = this;
 
     var name = this.get.name || '';
     var type = this.get.type || '';
-    
-    
-    // You might also wait transactions to prevent deadlock using waitTransaction()
-    db.trx.waitTransaction(function() {
+        
+    // You might also wait transactions to prevent deadlock in some database (ie: SQLite) 
+    // using waitTransaction(). Set first param of start() = true
     	
-    	db.trx.start(function() {
+    db.trx.start(true, function() {
 
-        db.models.Service.find({where: {name: name, type: type}})
-            .success(function(service) {
-
-                if (service) {    
-                    db.models.Queue.count({where: ['date(time)=date() AND serviceId=?', service.id]})
-                        .success(function(count) {
-
-                            db.models.Queue.create({
-                                start: new Date(),
-                                serviceId: service.id,
-                                queueNo: utils.padDigits(count, 3),
-                            })
-                            .success(function(record) {
-                                
-                                db.trx.commit(function(error) {
-                                    if (!error)   
-                                        self.content('OK');
-                                    else
-                                        self.content('ERROR');
-                                });
-                                
-                            })
-                            .error(function(error) {
-                                db.trx.rollback();
-                                self.content('ERROR');
-                            });
-
-                        })
-                        .error(db.trx.rollback);
-                    
-                } else {
-                    db.trx.rollback();
-                    self.content('SERVICE NOT FOUND');
-                }
-                    
-            });
-        });	
-    }
+	db.models.Service.find({where: {name: name, type: type}})
+	    .success(function(service) {
+	
+	        if (service) {    
+	            db.models.Queue.count({where: ['date(time)=date() AND serviceId=?', service.id]})
+	                .success(function(count) {
+	
+	                    db.models.Queue.create({
+	                        start: new Date(),
+	                        serviceId: service.id,
+	                        queueNo: utils.padDigits(count, 3),
+	                    })
+	                    .success(function(record) {
+	                        
+	                        db.trx.commit(function(error) {
+	                            if (!error)   
+	                                self.content('OK');
+	                            else
+	                                self.content('ERROR');
+	                        });
+	                        
+	                    })
+	                    .error(function(error) {
+	                        db.trx.rollback();
+	                        self.content('ERROR');
+	                    });
+	
+	                })
+	                .error(db.trx.rollback);
+	            
+	        } else {
+	            db.trx.rollback();
+	            self.content('SERVICE NOT FOUND');
+	        }
+	            
+	    });
+    });
 }
 ```
