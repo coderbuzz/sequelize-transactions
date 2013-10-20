@@ -35,7 +35,7 @@ function view_myViewEndPoint() {
     // You might also wait transactions to prevent deadlock in some database (ie: SQLite) 
     // using waitTransaction(). Set first param of start() = true
     	
-    db.trx.start(true, function() {
+    db.trx.start(true, function(commit, rollback) {
 
 	db.models.Service.find({where: {name: name, type: type}})
 	    .success(function(service) {
@@ -51,7 +51,7 @@ function view_myViewEndPoint() {
 	                    })
 	                    .success(function(record) {
 	                        
-	                        db.trx.commit(function(error) {
+	                        commit(function(error) {
 	                            if (!error)   
 	                                self.content('OK');
 	                            else
@@ -60,15 +60,15 @@ function view_myViewEndPoint() {
 	                        
 	                    })
 	                    .error(function(error) {
-	                        db.trx.rollback();
+	                        rollback();
 	                        self.content('ERROR');
 	                    });
 	
 	                })
-	                .error(db.trx.rollback);
+	                .error(rollback);
 	            
 	        } else {
-	            db.trx.rollback();
+	            rollback();
 	            self.content('SERVICE NOT FOUND');
 	        }
 	            
