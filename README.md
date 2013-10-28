@@ -17,7 +17,8 @@ function connectDB(callback) {
 	    logging: console.log // false
 	})
 
-	Transactions.useTransaction(sequelize);	
+	//Transactions.useTransaction(sequelize);
+	new Transactions(sequelize);	
 
 	// Init Models
 	// ...
