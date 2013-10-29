@@ -7,7 +7,7 @@ Example Usage:
 
 ```javascript
 var Sequelize = require('sequelize');
-var Transactions = require('sequelize-transactions');
+var Transaction = require('sequelize-transactions');
 var db = null; // sequelize instance
 
 function connectDB(callback) {
@@ -18,7 +18,7 @@ function connectDB(callback) {
 	})
 
 	//Transactions.useTransaction(sequelize);
-	new Transactions(sequelize);	
+	new Transaction(sequelize);	
 
 	// Init Models
 	// ...
