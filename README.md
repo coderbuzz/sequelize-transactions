@@ -1,6 +1,8 @@
 sequelize-transactions
 ======================
 
+# Obsolete: Since Sequelize already has a built-in Transaction, this library is no longer needed. Archived.
+
 Give Sequelize transactions ability
 
 Example Usage:
